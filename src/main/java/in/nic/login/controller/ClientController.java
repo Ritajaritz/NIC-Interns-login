@@ -1,7 +1,8 @@
 package in.nic.login.controller;
 
-import in.nic.login.model.Client;
+import in.nic.login.dto.KeyPairDto;
 import in.nic.login.dto.SignUpRequestDto;
+import in.nic.login.model.Client;
 import in.nic.login.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,14 @@ public class ClientController {
         Optional<String> otp = clientService.login(mobileNo);
         return otp.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest().body("Invalid mobile number"));
+    }
+
+    @PostMapping("/getkeys")
+    public ResponseEntity<KeyPairDto> getKeys(@RequestHeader("Authorization") String jwtToken, @RequestParam int keySize) {
+        if (keySize != 1024) {
+            return ResponseEntity.badRequest().build();
+        }
+        KeyPairDto keyPair = clientService.getKeys(keySize);
+        return ResponseEntity.ok(keyPair);
     }
 }

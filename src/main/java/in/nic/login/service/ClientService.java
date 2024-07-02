@@ -1,5 +1,6 @@
 package in.nic.login.service;
 
+import in.nic.login.dto.KeyPairDto;
 import in.nic.login.config.DateConfig;
 import in.nic.login.model.Client;
 import in.nic.login.dto.SignUpRequestDto;
@@ -7,7 +8,12 @@ import in.nic.login.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class ClientService {
@@ -39,5 +45,18 @@ public class ClientService {
                     client.setAddress(signUpRequestDto.getAddress());
                     return clientRepository.save(client);
                 });
+    }
+
+    public KeyPairDto getKeys(int keySize) {
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(keySize);
+            KeyPair pair = keyGen.generateKeyPair();
+            String privateKey = Base64.getEncoder().encodeToString(pair.getPrivate().getEncoded());
+            String publicKey = Base64.getEncoder().encodeToString(pair.getPublic().getEncoded());
+            return new KeyPairDto(privateKey, publicKey);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error generating RSA keys", e);
+        }
     }
 }

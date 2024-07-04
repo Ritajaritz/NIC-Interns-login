@@ -26,7 +26,7 @@ public class AuthService {
         var client = Client.builder()
                 .clientId(request.getClientId())
                 .clientSecret(passwordEncoder.encode(request.getClientSecret()))
-                .role(Role.CLIENT).build();
+                .role(Role.USER).build();
         clientRepository.save(client);
         var jwtToken = jwtService.generateToken(client);
         return AuthResponseDto.builder().token(jwtToken).build();
@@ -40,5 +40,13 @@ public class AuthService {
         var jwtToken = jwtService.generateToken(user);
         return AuthResponseDto.builder().token(jwtToken).build();
     }
+//    @Autowired
+//    private JwtUtil jwtUtil;
+//
+//    public boolean validateToken(String token) {
+//        // You may want to extract the username from the token or other claims
+//        String username = jwtUtil.extractClaims(token).getSubject();
+//        return jwtUtil.validateToken(token, username);
+//    }
 }
 

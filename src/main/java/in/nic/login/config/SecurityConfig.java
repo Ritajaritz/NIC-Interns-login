@@ -17,24 +17,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf ->csrf.disable())
-                .authorizeHttpRequests(auth->auth
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/init",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/swagger-ui/**",
-                                "/webjars/**",
+                                "/v3/api-docs/",
+                                "/swagger-resources/",
+                                "/swagger-ui/",
+                                "/webjars/",
                                 "/swagger-ui.html",
                                 "/swagger-ui/index.html")
                         .permitAll()
                         .anyRequest().authenticated()
-                ).sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
